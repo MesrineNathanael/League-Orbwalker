@@ -31,11 +31,11 @@ namespace Gumayusi_Orbwalker
     {
         private static Timer UiTimer; 
         
-        private List<Champion> champions;
+        private readonly List<Champion> champions;
 
         private Champion _selectedChampion = new Champion();
 
-        private LeagueHolder leagueHolder;
+        private readonly LeagueHolder leagueHolder;
 
         public Champion SelectedChampion
         {
@@ -54,8 +54,10 @@ namespace Gumayusi_Orbwalker
         {
             InitializeComponent();
 
-            UiTimer = new Timer();
-            UiTimer.Interval = 500;
+            UiTimer = new Timer
+            {
+                Interval = 500
+            };
             UiTimer.Elapsed += UiTimer_Elapsed;
 
             champions = new List<Champion>()

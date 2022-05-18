@@ -1,0 +1,15 @@
+﻿<Application x:Class="Gumayusi_Orbwalker.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Gumayusi_Orbwalker"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <BitmapImage x:Key="vayne" UriSource="/Gumayusi-Orbwalker;component/Resources/Img/Vayne_0.jpg" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

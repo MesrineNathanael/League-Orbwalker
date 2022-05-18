@@ -64,14 +64,56 @@ namespace Gumayusi_Orbwalker
                 {
                     Id = 0,
                     Name = "Vayne",
-                    PictureUri = new Uri(@"pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/Vayne_loading.jpg"),
+                    PictureUri = new Uri(@"pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/Vayne_12.jpg"),
                     Windup = 230
                 },
                 new Champion()
                 {
                     Id = 1,
                     Name = "Tristana",
-                    PictureUri = new Uri(@"pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/Tristana_loading.jpg"),
+                    PictureUri = new Uri(@"pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/Tristana_33.jpg"),
+                    Windup = 230
+                },
+                new Champion()
+                {
+                    Id = 2,
+                    Name = "Kai'sa",
+                    PictureUri = new Uri(@"pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/Kaisa_0.jpg"),
+                    Windup = 230
+                },
+                new Champion()
+                {
+                    Id = 3,
+                    Name = "KogMaw",
+                    PictureUri = new Uri(@"pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/KogMaw_9.jpg"),
+                    Windup = 230
+                },
+                new Champion()
+                {
+                    Id = 4,
+                    Name = "Xayah",
+                    PictureUri = new Uri(@"pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/Xayah_4.jpg"),
+                    Windup = 230
+                },
+                new Champion()
+                {
+                    Id = 5,
+                    Name = "Jinx",
+                    PictureUri = new Uri(@"pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/Jinx_29.jpg"),
+                    Windup = 230
+                },
+                new Champion()
+                {
+                    Id = 6,
+                    Name = "Miss Fortune",
+                    PictureUri = new Uri(@"pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/MissFortune_16.jpg"),
+                    Windup = 230
+                },
+                new Champion()
+                {
+                    Id = 7,
+                    Name = "Caitlyn",
+                    PictureUri = new Uri(@"pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/Caitlyn_13.jpg"),
                     Windup = 230
                 }
             };

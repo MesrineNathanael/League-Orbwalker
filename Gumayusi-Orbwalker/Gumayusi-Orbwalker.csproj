@@ -15,26 +15,48 @@
     <None Remove="Resources\Img\ashe_emote_1.png" />
     <None Remove="Resources\Img\back.jpg" />
     <None Remove="Resources\Img\back.png" />
+    <None Remove="Resources\Img\Caitlyn_13.jpg" />
+    <None Remove="Resources\Img\Jinx_29.jpg" />
+    <None Remove="Resources\Img\Kaisa_0.jpg" />
+    <None Remove="Resources\Img\Kayle_0.jpg" />
+    <None Remove="Resources\Img\KogMaw_9.jpg" />
+    <None Remove="Resources\Img\MissFortune_16.jpg" />
     <None Remove="Resources\Img\ok.png" />
+    <None Remove="Resources\Img\Quinn_0.jpg" />
     <None Remove="Resources\Img\rito.jpg" />
     <None Remove="Resources\Img\teemo_emote_1.png" />
     <None Remove="Resources\Img\Tristana_0.jpg" />
+    <None Remove="Resources\Img\Tristana_33.jpg" />
     <None Remove="Resources\Img\Tristana_loading.jpg" />
+    <None Remove="Resources\Img\Twitch_0.jpg" />
     <None Remove="Resources\Img\Vayne_0.jpg" />
+    <None Remove="Resources\Img\Vayne_12.jpg" />
     <None Remove="Resources\Img\Vayne_loading.jpg" />
+    <None Remove="Resources\Img\Xayah_4.jpg" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Resources\Img\ashe_emote_1.png" />
     <Content Include="Resources\Img\back.jpg" />
     <Content Include="Resources\Img\back.png" />
+    <Content Include="Resources\Img\Caitlyn_13.jpg" />
+    <Content Include="Resources\Img\Jinx_29.jpg" />
+    <Content Include="Resources\Img\Kaisa_0.jpg" />
+    <Content Include="Resources\Img\Kayle_0.jpg" />
+    <Content Include="Resources\Img\KogMaw_9.jpg" />
+    <Content Include="Resources\Img\MissFortune_16.jpg" />
     <Content Include="Resources\Img\ok.png" />
+    <Content Include="Resources\Img\Quinn_0.jpg" />
     <Content Include="Resources\Img\rito.jpg" />
     <Content Include="Resources\Img\teemo_emote_1.png" />
+    <Content Include="Resources\Img\Tristana_33.jpg" />
     <Content Include="Resources\Img\Tristana_loading.jpg" />
     <Content Include="Resources\Img\Tristana_0.jpg" />
+    <Content Include="Resources\Img\Twitch_0.jpg" />
     <Content Include="Resources\Img\Vayne_0.jpg" />
+    <Content Include="Resources\Img\Vayne_12.jpg" />
     <Content Include="Resources\Img\Vayne_loading.jpg" />
+    <Content Include="Resources\Img\Xayah_4.jpg" />
   </ItemGroup>
 
   <ItemGroup>

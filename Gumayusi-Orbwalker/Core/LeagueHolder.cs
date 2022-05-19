@@ -22,6 +22,7 @@ namespace Gumayusi_Orbwalker.Core
             _mouseInputs = new MouseInputs();
 
             OrbWalker = new OrbWalkerLogic(_keyInjection, _mouseInputs);
+            OrbWalker.Start();
         }
     }
 }

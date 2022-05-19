@@ -164,7 +164,7 @@
             <TextBlock Text="Press 'L' to orbwalk in game." Foreground="White" FontSize="12" HorizontalAlignment="Center"/>
         </StackPanel>
 
-        <Grid x:Name="SettingsPanelGrid" Visibility="Collapsed" Grid.Column="1" Background="#161616" Opacity="1"> <!--Config panel-->
+        <Grid x:Name="SettingsPanelGrid" d:Visibility="Visible"  Visibility="Collapsed" Grid.Column="1" Background="#161616" Opacity="1"> <!--Config panel-->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -190,7 +190,7 @@
             <src:NumericUpDown Margin="1,0,0,0" Grid.Row="1" Grid.Column="3" Width="60" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center" BorderThickness="1" Background="Transparent" Foreground="White"/>
 
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Accuracy mode : " HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
-            <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="True" Content="High accuracy" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="1,0,0,0" Foreground="White"/>
+            <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="True" Content="High accuracy" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="1,0,0,0" Foreground="White" FontSize="14"/>
         </Grid>
     </Grid>
 </src:GlowWindow>

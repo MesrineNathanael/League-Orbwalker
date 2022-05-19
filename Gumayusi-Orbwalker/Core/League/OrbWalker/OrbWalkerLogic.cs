@@ -98,10 +98,6 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
             {
                 Log.WriteInfo($"Enemy HP scanner started in thread {_enemyHpScanner.ManagedThreadId}");
             }
-
-            //test
-            Log.WriteInfo("Enter windup in ms :");
-            _championAnimationPause = Convert.ToInt32(Console.ReadLine());
         }
 
         private void OrbWalk()

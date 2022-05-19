@@ -15,6 +15,7 @@
     <None Remove="Resources\Img\ashe_emote_1.png" />
     <None Remove="Resources\Img\back.jpg" />
     <None Remove="Resources\Img\back.png" />
+    <None Remove="Resources\Img\BgLissandra.jpg" />
     <None Remove="Resources\Img\Caitlyn_13.jpg" />
     <None Remove="Resources\Img\Jinx_29.jpg" />
     <None Remove="Resources\Img\Kaisa_0.jpg" />
@@ -39,6 +40,7 @@
     <Content Include="Resources\Img\ashe_emote_1.png" />
     <Content Include="Resources\Img\back.jpg" />
     <Content Include="Resources\Img\back.png" />
+    <Content Include="Resources\Img\BgLissandra.jpg" />
     <Content Include="Resources\Img\Caitlyn_13.jpg" />
     <Content Include="Resources\Img\Jinx_29.jpg" />
     <Content Include="Resources\Img\Kaisa_0.jpg" />

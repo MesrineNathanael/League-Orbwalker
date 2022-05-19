@@ -109,7 +109,7 @@
         </Rectangle>
         <StackPanel>
             <Image VerticalAlignment="Top" Width="auto" Source="pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/rito.jpg"/>
-            <Button FontSize="14" Margin="0,1,0,0" BorderThickness="0" Content="Settings" Width="180" Height="40">
+            <Button Click="OpenSettings_Click" FontSize="14" Margin="0,1,0,0" BorderThickness="0" Content="Settings" Width="180" Height="40">
                 <Button.Style>
                     <Style TargetType="{x:Type Button}">
                         <Setter Property="Background" Value="#161616"/>
@@ -164,7 +164,7 @@
             <TextBlock Text="Press 'L' to orbwalk in game." Foreground="White" FontSize="12" HorizontalAlignment="Center"/>
         </StackPanel>
 
-        <Grid d:Visibility="Visible" Visibility="Visible" Grid.Column="1" Background="#161616" Opacity="1"> <!--Config panel-->
+        <Grid x:Name="SettingsPanelGrid" Visibility="Collapsed" Grid.Column="1" Background="#161616" Opacity="1"> <!--Config panel-->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -188,6 +188,9 @@
 
             <TextBlock Grid.Row="1" Grid.Column="2" Text="Windup offset : " HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
             <src:NumericUpDown Margin="1,0,0,0" Grid.Row="1" Grid.Column="3" Width="60" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center" BorderThickness="1" Background="Transparent" Foreground="White"/>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Accuracy mode : " HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
+            <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="True" Content="High accuracy" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="1,0,0,0" Foreground="White"/>
         </Grid>
     </Grid>
 </src:GlowWindow>

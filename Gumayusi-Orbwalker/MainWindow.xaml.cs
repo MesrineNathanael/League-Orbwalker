@@ -136,10 +136,18 @@ namespace Gumayusi_Orbwalker
 
         private void UiTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            Dispatcher.Invoke(() =>
+            try
             {
-                UpdateSelectedChampion(ChampionFlow.PageIndex);
-            });
+                Dispatcher.Invoke(() =>
+                {
+                    UpdateSelectedChampion(ChampionFlow.PageIndex);
+                });
+
+            }
+            catch (Exception)
+            {
+                Environment.Exit(0);
+            }
         }
 
         private void UpdateSelectedChampion(int index)
@@ -188,6 +196,30 @@ namespace Gumayusi_Orbwalker
             }
             UpdateUi();
         }
+
+        #region UI stuff
+
+        private bool _isSettingsPanelOpen = false;
+
+        public bool IsSettingsPanelOpen
+        {
+            get => _isSettingsPanelOpen;
+            set
+            {
+                if(_isSettingsPanelOpen != value)
+                {
+                    _isSettingsPanelOpen = value;
+                    SettingsPanelGrid.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+                }
+            }
+        }
+
+        private void OpenSettings_Click(object sender, RoutedEventArgs e)
+        {
+            IsSettingsPanelOpen = !IsSettingsPanelOpen;
+        }
+
+        #endregion
 
     }
 }

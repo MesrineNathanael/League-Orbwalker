@@ -69,6 +69,8 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
         public static int offsetX = 0;
         public static int offsetY = 95;
 
+        private Color _enemyHpBarColor = Color.White;
+
         public OrbWalkerLogic(KeyInjection keyInjection, MouseInputs mouseInputs) : base(keyInjection, mouseInputs)
         {
             Log.WriteInfo($"OrbWalker starting...");
@@ -193,6 +195,7 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
                             KeyInjector.PressKeyAsync(KeyCodeCharWrapper.GetKey(_attackChampionOnlyKey), true);
                             championAttackOnlyIsToggled = false;
                         }
+                        Thread.Sleep(10);
                     }
                 }
                 else
@@ -258,7 +261,7 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
                         _currentPlayerAttackSpeed = 1;
                     }
                     var autoA = ApiScraper.PlayerAttackSpeed();
-
+                    autoA = autoA.Replace(',', '.');
                     if (autoA != "")
                         _currentPlayerAttackSpeed = Convert.ToDouble(autoA);
 
@@ -282,13 +285,13 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
         {
             var pxbot = new PixelSearch();
             //string ENEMYHP = "#a52c21"; // set to user liking
-            string ENEMYHP = "#a52c21"; // set to user liking
-            Color ENEMYcolor = ColorTranslator.FromHtml(ENEMYHP);
+            //string ENEMYHP = "#a52c21";
+            // ENEMYcolor = ColorTranslator.FromHtml(ENEMYHP);
             while (true)
             {
                 if (_gameStarted)
                 {
-                    Point[] enemyArray = pxbot.Search(new Rectangle(0, 0, 1920, 1080), ENEMYcolor, 0);
+                    Point[] enemyArray = pxbot.Search(new Rectangle(0, 0, 1920, 1080), _enemyHpBarColor, 0);
                     searchArray.enemyHPArrayGlobal = enemyArray;
                     if (enemyArray.Count() > 0)
                     {
@@ -338,6 +341,11 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
         public void SetChampWindup(int windup)
         {
             _championAnimationPause = windup;
+        }
+
+        public void SetEnemyHpColorBar(string color)
+        {
+            _enemyHpBarColor = ColorTranslator.FromHtml(color);
         }
 
     }

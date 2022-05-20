@@ -8,7 +8,8 @@
                  ResizeMode="CanMinimize"
         Title="Gumayusi - Active" Height="500" Width="900"
         ActiveGlowColor="Violet"
-        InactiveGlowColor="MediumVioletRed">
+        InactiveGlowColor="MediumVioletRed"
+        Window.Loaded="GlowWindow_Loaded">
     <src:GlowWindow.Background>
         <ImageBrush ImageSource="pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/back.jpg" Opacity="0.6"></ImageBrush>
     </src:GlowWindow.Background>
@@ -183,14 +184,14 @@
             <TextBlock Grid.ColumnSpan="4" Text="---------------------------------- Configuration ----------------------------------" FontSize="17" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
             <TextBlock Grid.Row="1" Text="Enemy HP bar color : " HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
-            <TextBox Grid.Row="1" Grid.Column="1" Text="FFFFFF" Margin="1,0,0,0" Width="60" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" Background="Transparent" BorderThickness="1" FontSize="14"/>
-            <Rectangle Grid.Row="1" Grid.Column="1"  Width="60" Height="30" HorizontalAlignment="Right" VerticalAlignment="Center" Fill="White" Margin="0,0,40,0"/>
+            <TextBox TextChanged="EnemyHpColorTextBox_TextChanged" x:Name="EnemyHpColorTextBox" Grid.Row="1" Grid.Column="1" Text="FFFFFF" Margin="1,0,0,0" Width="70" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" Background="Transparent" BorderThickness="1" FontSize="14"/>
+            <Rectangle x:Name="EnemyHpColorRectangle" Grid.Row="1" Grid.Column="1"  Width="60" Height="30" HorizontalAlignment="Right" VerticalAlignment="Center" Fill="White" Margin="0,0,40,0"/>
 
             <TextBlock Grid.Row="1" Grid.Column="2" Text="Windup offset : " HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
-            <src:NumericUpDown Margin="1,0,0,0" Grid.Row="1" Grid.Column="3" Width="60" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center" BorderThickness="1" Background="Transparent" Foreground="White"/>
+            <src:NumericUpDown ValueChanged="WindupOffsetNumericUpDown_ValueChanged" x:Name="WindupOffsetNumericUpDown" Margin="1,0,0,0" Grid.Row="1" Grid.Column="3" Width="60" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center" BorderThickness="1" Background="Transparent" Foreground="White"/>
 
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Accuracy mode : " HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
-            <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="True" Content="High accuracy" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="1,0,0,0" Foreground="White" FontSize="14"/>
+            <CheckBox x:Name="AccuracyCheckBox" Unchecked="HighAccuracy_Click" Checked="HighAccuracy_Click" Grid.Row="2" Grid.Column="1" IsChecked="True" Content="High accuracy" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="1,0,0,0" Foreground="White" FontSize="14"/>
         </Grid>
     </Grid>
 </src:GlowWindow>

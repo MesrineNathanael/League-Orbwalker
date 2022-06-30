@@ -232,6 +232,35 @@ namespace Gumayusi_Orbwalker
             UpdateUi();
         }
 
+        public static byte[] StringToByteArray(string hex)
+        {
+            return Enumerable.Range(0, hex.Length)
+                             .Where(x => x % 2 == 0)
+                             .Select(x =>Convert.ToByte(hex.Substring(x, 2), 16))
+                             .ToArray();
+        }
+
+        private void SaveConfig()
+        {
+            var conf = leagueHolder.Settings.Config;
+            conf.isHighAccuracyModeChecked = _highAccuracyIsChecked;
+            conf.EnemyHpColorHtml = _enemyHpColor;
+            leagueHolder.SaveSettingsAndApply();
+        }
+
+        private void LoadConfig(bool loadFile = true)
+        {
+            if(loadFile)
+                leagueHolder.LoadSettingsAndApply();
+
+            var conf = leagueHolder.Settings.Config;
+
+            HighAccuracyIsChecked = conf.isHighAccuracyModeChecked;
+            EnemyHpColor = conf.EnemyHpColorHtml ?? "#FFFFFF";
+            EnemyHpBarColorTextBlock.Text = EnemyHpColor.Substring(1) ?? "FFFFFF";
+            EnemyHpColorTextBox.Text = EnemyHpColor.Substring(1) ?? "FFFFFF";
+        }
+
         #region UI stuff
 
         private bool _isSettingsPanelOpen = false;
@@ -245,7 +274,64 @@ namespace Gumayusi_Orbwalker
                 {
                     _isSettingsPanelOpen = value;
                     SettingsPanelGrid.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+                    if(value == false)
+                    {
+                        SaveConfig();
+                    }
+                    else
+                    {
+                        LoadConfig();
+                    }
                 }
+            }
+        }
+
+        private bool _highAccuracyIsChecked;
+
+        public bool HighAccuracyIsChecked
+        {
+            get => _highAccuracyIsChecked;
+            set
+            {
+                _highAccuracyIsChecked = value;
+            }
+        }
+
+        private string _enemyHpColor;
+
+        public string EnemyHpColor
+        {
+            get => _enemyHpColor;
+            set
+            {
+                if(value.Length != 7 || value == null)
+                {
+                    EnemyHpColorRectangle.Fill = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                }
+                else
+                {
+                    if(value.Length == 7)
+                    {
+                        _enemyHpColor = value;
+
+                        var RGB = StringToByteArray(value.Substring(1));
+
+                        EnemyHpColorRectangle.Fill = new SolidColorBrush(Color.FromRgb(RGB[0], RGB[1], RGB[2]));
+                    }
+                }
+
+            }
+        }
+
+        private int _windupOffset;
+
+        public int WindupOffset
+        {
+            get => _windupOffset;
+            set
+            {
+                _windupOffset = value;
+                WindupOffsetNumericUpDown.Value = _windupOffset;
             }
         }
 
@@ -254,7 +340,35 @@ namespace Gumayusi_Orbwalker
             IsSettingsPanelOpen = !IsSettingsPanelOpen;
         }
 
+        private void HighAccuracy_Click(object sender, RoutedEventArgs e)
+        {
+            HighAccuracyIsChecked = !HighAccuracyIsChecked;
+            AccuracyCheckBox.IsChecked = _highAccuracyIsChecked;
+        }
+
+        private void EnemyHpColorTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (EnemyHpColorRectangle == null) return;
+            if (EnemyHpColorTextBox.Text.Length == 6)
+            {
+                EnemyHpColor = "#" + EnemyHpColorTextBox.Text;
+            }
+            else
+            {
+                EnemyHpColor = "#FFFFFF";
+            }
+        }
+
+        private void WindupOffsetNumericUpDown_ValueChanged(object sender, HandyControl.Data.FunctionEventArgs<double> e)
+        {
+            WindupOffset = Convert.ToInt32(WindupOffsetNumericUpDown.Value);
+        }
+
         #endregion
 
+        private void GlowWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadConfig();
+        }
     }
 }

@@ -32,6 +32,8 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
 
         private Key _orbWalkerActivationKey = Key.L;
 
+        private Key _orbWalkerWithoutEnemyActivationKey = Key.K;
+
         private char _showRangeKey = 'C';
 
         private char _attackChampionOnlyKey = 'Z';
@@ -67,7 +69,10 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
         private string _currentChampion = "";
 
         public static int offsetX = 0;
+
         public static int offsetY = 95;
+
+        public bool ScanEnemyEnabled = true;
 
         public OrbWalkerLogic(KeyInjection keyInjection, MouseInputs mouseInputs) : base(keyInjection, mouseInputs)
         {
@@ -113,8 +118,19 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
             {
                 if (_gameStarted)
                 {
-                    if (Keyboard.IsKeyDown(_orbWalkerActivationKey))
+                    
+
+                    if (Keyboard.IsKeyDown(_orbWalkerActivationKey) || Keyboard.IsKeyDown(_orbWalkerWithoutEnemyActivationKey))
                     {
+                        if (Keyboard.IsKeyDown(_orbWalkerWithoutEnemyActivationKey))
+                        {
+                            ScanEnemyEnabled = false;
+                        }
+                        else
+                        {
+                            ScanEnemyEnabled = true;
+                        }
+
                         CalculateWindup();
 
                         if (!championAttackOnlyIsToggled && _attackChampionOnly)
@@ -134,7 +150,7 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
                                 enemyPos = searchArray.enemyHPArrayGlobal[searchArray.enemyHPArrayGlobal.Count() / 2];
                             }
 
-                            if (searchArray.enemyHPArrayGlobal.Count() > 0)
+                            if (searchArray.enemyHPArrayGlobal.Count() > 0 && ScanEnemyEnabled)
                             {
                                 if (searchArray.enemyHPArrayGlobal.Count() < 20)
                                 {
@@ -152,7 +168,7 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
                             //Thread.Sleep(30);
                             Sleep(300000);
 
-                            if (lastMousePos.X != 0)
+                            if (lastMousePos.X != 0 && ScanEnemyEnabled)
                             {
                                 MouseInputs.SetPosition(lastMousePos.X, lastMousePos.Y);
                             }

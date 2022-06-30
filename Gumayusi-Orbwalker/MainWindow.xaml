@@ -162,6 +162,8 @@
                 </Button.Style>
             </Button>
             <TextBlock Text="Press 'L' to orbwalk in game." Foreground="White" FontSize="12" HorizontalAlignment="Center"/>
+            <TextBlock Text="Press 'K' to orbwalk in game" Foreground="White" FontSize="12" HorizontalAlignment="Center"></TextBlock>
+            <TextBlock Text="without enemy finder." Foreground="White" FontSize="12" HorizontalAlignment="Center"></TextBlock>
         </StackPanel>
 
         <Grid x:Name="SettingsPanelGrid" d:Visibility="Visible"  Visibility="Collapsed" Grid.Column="1" Background="#161616" Opacity="1"> <!--Config panel-->

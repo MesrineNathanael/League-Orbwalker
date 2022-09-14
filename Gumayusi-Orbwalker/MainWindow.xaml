@@ -50,8 +50,8 @@
                 </Grid.RowDefinitions>
                 <TextBlock Text="------------------------------ Actual parameters ------------------------------" Foreground="White" Grid.ColumnSpan="10" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" FontWeight="Medium"/>
 
-                <TextBlock Grid.Row="1" Text="Windup w/offsets : " HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" FontSize="13"/>
-                <TextBlock x:Name="WindupTotalTextBlock" Grid.Row="1" Grid.Column="1" Text="0" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="13"/>
+                <TextBlock Visibility="Collapsed" Grid.Row="1" Text="Windup w/offsets : " HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" FontSize="13"/>
+                <TextBlock Visibility="Collapsed" x:Name="WindupTotalTextBlock" Grid.Row="1" Grid.Column="1" Text="0" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="13"/>
 
                 <TextBlock Grid.Row="2" Text="Enemy HP color : " HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" FontSize="13"/>
                 <TextBlock x:Name="EnemyHpBarColorTextBlock" Grid.Row="2" Grid.Column="1" Text="FFFFFF" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="13"/>
@@ -59,8 +59,8 @@
                 <TextBlock Grid.Row="2" Grid.Column="2" Text="Accuracy mode : " HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" FontSize="13"/>
                 <TextBlock x:Name="AccuracyModeTextBlock" Grid.Row="2" Grid.Column="3" Text="High" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="13"/>
                 
-                <TextBlock Grid.Row="1" Grid.Column="2" Text="In game A.S. : " HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" FontSize="13"/>
-                <TextBlock x:Name="InGameAttackSpeedTextBlock" Grid.Row="1" Grid.Column="3" Text="0" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="13"/>
+                <TextBlock Visibility="Collapsed" Grid.Row="1" Grid.Column="2" Text="In game A.S. : " HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" FontSize="13"/>
+                <TextBlock Visibility="Collapsed" x:Name="InGameAttackSpeedTextBlock" Grid.Row="1" Grid.Column="3" Text="0" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="13"/>
             </Grid>
             
             <Grid DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,10,0">
@@ -136,7 +136,7 @@
                     </Style>
                 </Button.Style>
             </Button>
-            <Button FontSize="14" BorderThickness="0" Content="About" Width="180" Height="40">
+            <Button Click="ButtonAbout_OnClick" FontSize="14" BorderThickness="0" Content="About" Width="180" Height="40">
                 <Button.Style>
                     <Style TargetType="{x:Type Button}">
                         <Setter Property="Background" Value="#161616"/>
@@ -167,7 +167,8 @@
             <TextBlock Text="without enemy finder." Foreground="White" FontSize="12" HorizontalAlignment="Center"></TextBlock>
         </StackPanel>
 
-        <Grid x:Name="SettingsPanelGrid" d:Visibility="Visible"  Visibility="Collapsed" Grid.Column="1" Background="#161616" Opacity="1"> <!--Config panel-->
+        <Grid x:Name="SettingsPanelGrid" d:Visibility="Visible"  Visibility="Collapsed" Grid.Column="1" Background="#161616" Opacity="1">
+            <!--Config panel-->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -186,14 +187,24 @@
             <TextBlock Grid.ColumnSpan="4" Text="---------------------------------- Configuration ----------------------------------" FontSize="17" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
             <TextBlock Grid.Row="1" Text="Enemy HP bar color : " HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
-            <TextBox TextChanged="EnemyHpColorTextBox_TextChanged" x:Name="EnemyHpColorTextBox" Grid.Row="1" Grid.Column="1" Text="FFFFFF" Margin="1,0,0,0" Width="70" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" Background="Transparent" BorderThickness="1" FontSize="14"/>
+            <TextBox TextChanged="EnemyHpColorTextBox_TextChanged" x:Name="EnemyHpColorTextBox" Grid.Row="1" Grid.Column="1" MaxLength="6" Text="FFFFFF" Margin="1,0,0,0" Width="70" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" Background="Transparent" BorderThickness="1" FontSize="14"/>
             <Rectangle x:Name="EnemyHpColorRectangle" Grid.Row="1" Grid.Column="1"  Width="60" Height="30" HorizontalAlignment="Right" VerticalAlignment="Center" Fill="White" Margin="0,0,40,0"/>
 
-            <TextBlock Grid.Row="1" Grid.Column="2" Text="Windup offset : " HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
-            <src:NumericUpDown ValueChanged="WindupOffsetNumericUpDown_ValueChanged" x:Name="WindupOffsetNumericUpDown" Margin="1,0,0,0" Grid.Row="1" Grid.Column="3" Width="60" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center" BorderThickness="1" Background="Transparent" Foreground="White"/>
+            <TextBlock Visibility="Collapsed" Grid.Row="1" Grid.Column="2" Text="Windup offset : " HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
+            <src:NumericUpDown Visibility="Collapsed"  ValueChanged="WindupOffsetNumericUpDown_ValueChanged" x:Name="WindupOffsetNumericUpDown" Margin="1,0,0,0" Grid.Row="1" Grid.Column="3" Width="60" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center" BorderThickness="1" Background="Transparent" Foreground="White"/>
 
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Accuracy mode : " HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
             <CheckBox x:Name="AccuracyCheckBox" Unchecked="HighAccuracy_Click" Checked="HighAccuracy_Click" Grid.Row="2" Grid.Column="1" IsChecked="True" Content="High accuracy" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="1,0,0,0" Foreground="White" FontSize="14"/>
+
+            <TextBlock Text="/!\   IMPORTANT   /!\" Foreground="RED" HorizontalAlignment="Center" VerticalAlignment="center" Grid.Row="5" Grid.Column="0"  FontSize="16"/>
+            <TextBlock Text="Bind your keys to :" Foreground="White" VerticalAlignment="Bottom" Grid.Row="5" Grid.Column="0"  FontSize="16"/>
+            <StackPanel
+                Orientation="Vertical" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2">
+                <TextBlock Text="//move = V" Foreground="White" FontSize="14"/>
+                <TextBlock Text="//Attack on cursor = X" Foreground="White" FontSize="14"/>
+                <TextBlock Text="//Attack champion only on down = Z" Foreground="White" FontSize="14"/>
+            </StackPanel>
+
         </Grid>
     </Grid>
 </src:GlowWindow>

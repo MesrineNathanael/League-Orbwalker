@@ -6,16 +6,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Gumayusi_Orbwalker.Core.League.OrbWalker
 {
     public class OrbWalkerLogic : KeyListener
     {
-        List<Shortcut> Shortcuts = new List<Shortcut>
+        readonly List<Shortcut> _shortcuts = new()
         {
             new Shortcut()
             {
@@ -28,29 +26,23 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
             }
         };
 
-        PixelSearchArray searchArray = new PixelSearchArray();
+        readonly PixelSearchArray _searchArray = new();
 
-        private Key _orbWalkerActivationKey = Key.L;
+        private const Key OrbWalkerActivationKey = Key.L;
 
-        private Key _orbWalkerWithoutEnemyActivationKey = Key.K;
+        private const Key OrbWalkerWithoutEnemyActivationKey = Key.K;
 
-        private char _showRangeKey = 'C';
+        private const char ShowRangeKey = 'C';
 
-        private char _attackChampionOnlyKey = 'Z';
+        private const char AttackChampionOnlyKey = 'Z';
 
-        private char _attackOnCursorKey = 'X';
+        private const char AttackOnCursorKey = 'X';
 
-        private char _moveChampionKey = 'V';
+        private const char MoveChampionKey = 'V';
 
         //move = V
         //Attack on cursor = X
-        //Attcak champion only on down = Z
-
-        private Thread _orbWalkerThread;
-
-        private Thread _statScraperThread;
-
-        private Thread _enemyHpScanner;
+        //Attack champion only on down = Z
 
         private bool _gameStarted = false;
 
@@ -60,7 +52,7 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
 
         private double _currentPlayerAttackSpeed = 1;
 
-        private double _windupOffset = 300;
+        private readonly double _windupOffset = 300;
 
         private double _windup = 1500; // in ms
 
@@ -68,9 +60,9 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
 
         private string _currentChampion = "";
 
-        public static int offsetX = 0;
+        public static int OffsetX = 0;
 
-        public static int offsetY = 95;
+        public static int OffsetY = 95;
         
         private Color _enemyHpBarColor = Color.White;
 
@@ -79,31 +71,31 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
         public OrbWalkerLogic(KeyInjection keyInjection, MouseInputs mouseInputs) : base(keyInjection, mouseInputs)
         {
             Log.WriteInfo($"OrbWalker starting...");
-            _orbWalkerThread = new Thread(OrbWalk);
-            _orbWalkerThread.SetApartmentState(ApartmentState.STA);
-            _orbWalkerThread.Start();
+            var orbWalkerThread = new Thread(OrbWalk);
+            orbWalkerThread.SetApartmentState(ApartmentState.STA);
+            orbWalkerThread.Start();
 
-            _statScraperThread = new Thread(PlayerStatsScraper);
-            _statScraperThread.SetApartmentState(ApartmentState.STA);
-            _statScraperThread.Start();
+            var statScraperThread = new Thread(PlayerStatsScraper);
+            statScraperThread.SetApartmentState(ApartmentState.STA);
+            statScraperThread.Start();
 
-            _enemyHpScanner = new Thread(ScanEnemyHP);
-            _enemyHpScanner.SetApartmentState(ApartmentState.STA);
-            _enemyHpScanner.Start();
+            var enemyHpScanner = new Thread(ScanEnemyHp);
+            enemyHpScanner.SetApartmentState(ApartmentState.STA);
+            enemyHpScanner.Start();
 
-            if (_orbWalkerThread.IsAlive)
+            if (orbWalkerThread.IsAlive)
             {
-                Log.WriteInfo($"OrbWalker started in thread {_orbWalkerThread.ManagedThreadId}");
+                Log.WriteInfo($"OrbWalker started in thread {orbWalkerThread.ManagedThreadId}");
             }
 
-            if (_statScraperThread.IsAlive)
+            if (statScraperThread.IsAlive)
             {
-                Log.WriteInfo($"Player stats scraper started in thread {_statScraperThread.ManagedThreadId}");
+                Log.WriteInfo($"Player stats scraper started in thread {statScraperThread.ManagedThreadId}");
             }
 
-            if (_enemyHpScanner.IsAlive)
+            if (enemyHpScanner.IsAlive)
             {
-                Log.WriteInfo($"Enemy HP scanner started in thread {_enemyHpScanner.ManagedThreadId}");
+                Log.WriteInfo($"Enemy HP scanner started in thread {enemyHpScanner.ManagedThreadId}");
             }
         }
 
@@ -120,11 +112,10 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
             {
                 if (_gameStarted)
                 {
-                    
 
-                    if (Keyboard.IsKeyDown(_orbWalkerActivationKey) || Keyboard.IsKeyDown(_orbWalkerWithoutEnemyActivationKey))
+                    if (Keyboard.IsKeyDown(OrbWalkerActivationKey) || Keyboard.IsKeyDown(OrbWalkerWithoutEnemyActivationKey))
                     {
-                        if (Keyboard.IsKeyDown(_orbWalkerWithoutEnemyActivationKey))
+                        if (Keyboard.IsKeyDown(OrbWalkerWithoutEnemyActivationKey))
                         {
                             ScanEnemyEnabled = false;
                         }
@@ -137,7 +128,7 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
 
                         if (!championAttackOnlyIsToggled && _attackChampionOnly)
                         {
-                            KeyInjector.PressKeyAsync(KeyCodeCharWrapper.GetKey(_attackChampionOnlyKey), false);
+                            KeyInjector.PressKeyAsync(KeyCodeCharWrapper.GetKey(AttackChampionOnlyKey), false);
                             championAttackOnlyIsToggled = true;
                         }
 
@@ -147,25 +138,25 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
 
                             Log.WriteDebug("Attacking...");
                             var enemyPos = new Point();
-                            if (searchArray.enemyHPArrayGlobal.Count() > 0)
+                            if (_searchArray.EnemyHpArrayGlobal.Any())
                             {
-                                enemyPos = searchArray.enemyHPArrayGlobal[searchArray.enemyHPArrayGlobal.Count() / 2];
+                                enemyPos = _searchArray.EnemyHpArrayGlobal[_searchArray.EnemyHpArrayGlobal.Count() / 2];
                             }
 
-                            if (searchArray.enemyHPArrayGlobal.Count() > 0 && ScanEnemyEnabled)
+                            if (_searchArray.EnemyHpArrayGlobal.Any() && ScanEnemyEnabled)
                             {
-                                if (searchArray.enemyHPArrayGlobal.Count() < 20)
+                                if (_searchArray.EnemyHpArrayGlobal.Count() < 20)
                                 {
                                     Log.WriteWarning("Low enemy array, click will not perfom");
                                 }
                                 else
                                 {
-                                    MouseInputs.SetPosition(enemyPos.X, enemyPos.Y + offsetY);
+                                    MouseInputs.SetPosition(enemyPos.X, enemyPos.Y + OffsetY);
 
                                 }
                             }
 
-                            TypeKey(_attackOnCursorKey.ToString(), 10000);
+                            TypeKey(AttackOnCursorKey.ToString(), 10000);
 
                             //Thread.Sleep(30);
                             Sleep(300000);
@@ -192,7 +183,7 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
 
                             if (moveTimeCount >= moveTime)
                             {
-                                TypeKey(_moveChampionKey.ToString(), 10000);
+                                TypeKey(MoveChampionKey.ToString(), 10000);
                                 moveTimeCount = 0;
                             }
                             else
@@ -208,7 +199,7 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
                     {
                         if (championAttackOnlyIsToggled && _attackChampionOnly)
                         {
-                            KeyInjector.PressKeyAsync(KeyCodeCharWrapper.GetKey(_attackChampionOnlyKey), true);
+                            KeyInjector.PressKeyAsync(KeyCodeCharWrapper.GetKey(AttackChampionOnlyKey), true);
                             championAttackOnlyIsToggled = false;
                         }
                         Thread.Sleep(10);
@@ -231,7 +222,7 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
 
                 WaitingForUpKey();
 
-                foreach (var shortcut in Shortcuts)
+                foreach (var shortcut in _shortcuts)
                 {
                     bool allKeyPressed = false;
                     foreach (var key in shortcut.Keys)
@@ -249,11 +240,10 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
                         allKeyPressed = true;
                     }
 
-                    if (allKeyPressed && !WaitForUpKey)
-                    {
-                        ParseSugarText(shortcut.ToString());
-                        WaitForUpKey = true;
-                    }
+                    if (!allKeyPressed || WaitForUpKey) continue;
+
+                    ParseSugarText(shortcut.ToString());
+                    WaitForUpKey = true;
                 }
             }
         }
@@ -286,18 +276,8 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
                 Thread.Sleep(500);
             }
         }
-
-        private void PlayerChampionScraper()
-        {
-            _currentChampion = ApiScraper.PlayerChampionName();
-
-            _championAnimationPause = ChampionWindupData.GetChampionWindup(_currentChampion);
-
-            Log.WriteInfo($"Your champion is : {_currentChampion}");
-            Log.WriteInfo($"Base windup for {_currentChampion} is {_championAnimationPause}ms");
-        }
-
-        private void ScanEnemyHP()
+        
+        private void ScanEnemyHp()
         {
             var pxbot = new PixelSearch();
             //string ENEMYHP = "#a52c21"; // set to user liking
@@ -307,9 +287,10 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
             {
                 if (_gameStarted)
                 {
-                    Point[] enemyArray = pxbot.Search(new Rectangle(0, 0, 1920, 1080), _enemyHpBarColor, 0);
-                    searchArray.enemyHPArrayGlobal = enemyArray;
-                    if (enemyArray.Count() > 0)
+                    //Point[] enemyArray = pxbot.Search(new Rectangle(0, 0, 1920, 1080), _enemyHpBarColor, 0);
+                    Point[] enemyArray = pxbot.Search_Spiral(new Rectangle(0, 0, 1920, 1080), _enemyHpBarColor, 0);
+                    _searchArray.EnemyHpArrayGlobal = enemyArray;
+                    if (enemyArray.Any())
                     {
                         Log.WriteDebug($"Enemy found at {enemyArray[enemyArray.Count() / 2].X};{enemyArray[enemyArray.Count() / 2].Y}");
                     }
@@ -334,7 +315,7 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
             {
                 _showRange = !_showRange;
                 Log.WriteInfo($"OrbWalker : show range set to {_showRange}");
-                KeyInjector.PressKeyAsync(KeyCodeCharWrapper.GetKey(_showRangeKey), !_showRange);
+                KeyInjector.PressKeyAsync(KeyCodeCharWrapper.GetKey(ShowRangeKey), !_showRange);
             }
             else if (text.Contains("ach"))
             {
@@ -361,7 +342,14 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
 
         public void SetEnemyHpColorBar(string color)
         {
-            _enemyHpBarColor = ColorTranslator.FromHtml(color);
+            try
+            {
+                _enemyHpBarColor = ColorTranslator.FromHtml(color);
+            }
+            catch (Exception e)
+            {
+                Log.WriteError($"Error while setting enemy hp color bar : {e.Message}.");
+            }
         }
 
     }

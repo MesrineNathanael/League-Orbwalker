@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Gumayusi_Orbwalker.Core.League.PixelBot
@@ -28,92 +24,267 @@ namespace Gumayusi_Orbwalker.Core.League.PixelBot
             uint pixel = GetPixel(hdc, x, y);
             ReleaseDC(IntPtr.Zero, hdc);
             Color color = Color.FromArgb((int)(pixel & 0x000000FF),
-                         (int)(pixel & 0x0000FF00) >> 8,
-                         (int)(pixel & 0x00FF0000) >> 16);
+                (int)(pixel & 0x0000FF00) >> 8,
+                (int)(pixel & 0x00FF0000) >> 16);
             return color;
         }
-        Bitmap bmp = new Bitmap(1, 1);
+
+        private readonly Bitmap _bmp = new(1, 1);
+
         public Color GetColorAt(int x, int y)
         {
-            Rectangle bounds = new Rectangle(x, y, 1, 1);
-            using (Graphics g = Graphics.FromImage(bmp))
+            var bounds = new Rectangle(x, y, 1, 1);
+            using (Graphics g = Graphics.FromImage(_bmp))
                 g.CopyFromScreen(bounds.Location, Point.Empty, bounds.Size);
-            return bmp.GetPixel(0, 0);
+            return _bmp.GetPixel(0, 0);
         }
 
-        private int monitor;
-        public unsafe Point[] SearchPixel(Rectangle rect, Color PixelColor, int ShadeVariation)
+        private int _monitor;
+
+        public Point[] Search(Rectangle rect, Color pixelColor, int shadeVariation)
         {
-            ArrayList arrayList = new ArrayList();
-            using (var tile = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb))
-            {
-                if (monitor >= Screen.AllScreens.Length)
-                {
-                    monitor = 0;
-                }
-                int left = Screen.AllScreens[monitor].Bounds.Left;
-                int top = Screen.AllScreens[monitor].Bounds.Top;
-                using (var g = Graphics.FromImage(tile))
-                {
-                    g.CopyFromScreen(rect.X + left, rect.Y + top, 0, 0, rect.Size, CopyPixelOperation.SourceCopy);
-                }
-                BitmapData bitmapData = tile.LockBits(new Rectangle(0, 0, tile.Width, tile.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                int[] array = new int[]
-                    {
-                     PixelColor.B,
-                     PixelColor.G,
-                     PixelColor.R
-                };
+            var points = new ArrayList();
+            var regionInBitmap = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
 
-                for (int i = 0; i < bitmapData.Height; i++)
-                {
-                    byte* ptr = (byte*)(void*)bitmapData.Scan0 + i * bitmapData.Stride;
-                    for (int j = 0; j < bitmapData.Width; j++)
-                    {
-                        if (ptr[j * 3] >= array[0] - ShadeVariation & ptr[j * 3] <= array[0] + ShadeVariation && ptr[j * 3 + 1] >= array[1] - ShadeVariation & ptr[j * 3 + 1] <= array[1] + ShadeVariation && ptr[j * 3 + 2] >= array[2] - ShadeVariation & ptr[j * 3 + 2] <= array[2] + ShadeVariation)
-                        {
-                            arrayList.Add(new Point(j + rect.X, i + rect.Y));
-                        }
-                    }
-                }
-                return (Point[])arrayList.ToArray(typeof(Point));
-            }
-        }
-        public Point[] Search(Rectangle rect, Color Pixel_Color, int Shade_Variation)
-        {
-            ArrayList points = new ArrayList();
-            Bitmap RegionIn_Bitmap = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
-
-            if (monitor >= Screen.AllScreens.Length)
+            if (_monitor >= Screen.AllScreens.Length)
             {
-                monitor = 0;
+                _monitor = 0;
             }
 
-            int xOffset = Screen.AllScreens[monitor].Bounds.Left;
-            int yOffset = Screen.AllScreens[monitor].Bounds.Top;
+            var xOffset = Screen.AllScreens[_monitor].Bounds.Left;
+            var yOffset = Screen.AllScreens[_monitor].Bounds.Top;
 
-            using (Graphics GFX = Graphics.FromImage(RegionIn_Bitmap))
+            using (var gfx = Graphics.FromImage(regionInBitmap))
             {
-                GFX.CopyFromScreen(rect.X + xOffset, rect.Y + yOffset, 0, 0, rect.Size, CopyPixelOperation.SourceCopy);
+                gfx.CopyFromScreen(rect.X + xOffset, rect.Y + yOffset, 0, 0, rect.Size, CopyPixelOperation.SourceCopy);
             }
-            BitmapData RegionIn_BitmapData = RegionIn_Bitmap.LockBits(new Rectangle(0, 0, RegionIn_Bitmap.Width, RegionIn_Bitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-            int[] Formatted_Color = new int[3] { Pixel_Color.B, Pixel_Color.G, Pixel_Color.R }; //bgr
+
+            var regionInBitmapData = regionInBitmap.LockBits(
+                new Rectangle(0, 0, regionInBitmap.Width, regionInBitmap.Height), ImageLockMode.ReadWrite,
+                PixelFormat.Format24bppRgb);
+            var formattedColor = new int[] { pixelColor.B, pixelColor.G, pixelColor.R }; //bgr
 
             unsafe
             {
-                for (int y = 0; y < RegionIn_BitmapData.Height; y++)
+                for (var y = 0; y < regionInBitmapData.Height; y++)
                 {
-                    byte* row = (byte*)RegionIn_BitmapData.Scan0 + y * RegionIn_BitmapData.Stride;
-                    for (int x = 0; x < RegionIn_BitmapData.Width; x++)
+                    var row = (byte*)regionInBitmapData.Scan0 + y * regionInBitmapData.Stride;
+                    for (var x = 0; x < regionInBitmapData.Width; x++)
                     {
-                        if (row[x * 3] >= Formatted_Color[0] - Shade_Variation & row[x * 3] <= Formatted_Color[0] + Shade_Variation) //blue
-                            if (row[x * 3 + 1] >= Formatted_Color[1] - Shade_Variation & row[x * 3 + 1] <= Formatted_Color[1] + Shade_Variation) //green
-                                if (row[x * 3 + 2] >= Formatted_Color[2] - Shade_Variation & row[x * 3 + 2] <= Formatted_Color[2] + Shade_Variation) //red
+                        if (row[x * 3] >= formattedColor[0] - shadeVariation &
+                            row[x * 3] <= formattedColor[0] + shadeVariation) //blue
+                            if (row[x * 3 + 1] >= formattedColor[1] - shadeVariation &
+                                row[x * 3 + 1] <= formattedColor[1] + shadeVariation) //green
+                                if (row[x * 3 + 2] >= formattedColor[2] - shadeVariation &
+                                    row[x * 3 + 2] <= formattedColor[2] + shadeVariation) //red
                                     points.Add(new Point(x + rect.X, y + rect.Y));
                     }
                 }
             }
-            RegionIn_Bitmap.Dispose();
+
+            regionInBitmap.Dispose();
+            return (Point[])points.ToArray(typeof(Point));
+        }
+
+        public Point[] Search_Spiral(Rectangle rect, Color pixelColor, int shadeVariation)
+        {
+            var points = new ArrayList();
+            var regionInBitmap = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
+
+            if (_monitor >= Screen.AllScreens.Length)
+            {
+                _monitor = 0;
+            }
+
+            var xOffset = Screen.AllScreens[_monitor].Bounds.Left;
+            var yOffset = Screen.AllScreens[_monitor].Bounds.Top;
+
+            using (var gfx = Graphics.FromImage(regionInBitmap))
+            {
+                gfx.CopyFromScreen(rect.X + xOffset, rect.Y + yOffset, 0, 0, rect.Size, CopyPixelOperation.SourceCopy);
+            }
+
+            var regionInBitmapData = regionInBitmap.LockBits(
+                new Rectangle(0, 0, regionInBitmap.Width, regionInBitmap.Height), ImageLockMode.ReadWrite,
+                PixelFormat.Format24bppRgb);
+            var formattedColor = new int[] { pixelColor.B, pixelColor.G, pixelColor.R }; //bgr
+
+            unsafe
+            {
+                //search in RegionIn_BitmapData in spiral pattern
+                var xMax = regionInBitmapData.Width;
+                var yMax = regionInBitmapData.Height;
+                const int xMin = 0;
+                const int yMin = 0;
+                var xStep = 1;
+                var yStep = 1;
+                var xDirection = 1;
+                var yDirection = 1;
+                var xDistance = xMax - xMin;
+                var yDistance = yMax - yMin;
+                var xDistanceStep = xDistance;
+                var yDistanceStep = yDistance;
+                while (xDistance > 0 || yDistance > 0)
+                {
+                    int x;
+                    int y;
+                    for (var i = 0; i < xDistance; i++)
+                    {
+                        x = xMin + xStep * xDirection;
+                        y = yMin + yStep * yDirection;
+                        var row = (byte*)regionInBitmapData.Scan0 + y * regionInBitmapData.Stride;
+                        if (row[x * 3] >= formattedColor[0] - shadeVariation &
+                            row[x * 3] <= formattedColor[0] + shadeVariation) //blue
+                            if (row[x * 3 + 1] >= formattedColor[1] - shadeVariation &
+                                row[x * 3 + 1] <= formattedColor[1] + shadeVariation) //green
+                                if (row[x * 3 + 2] >= formattedColor[2] - shadeVariation &
+                                    row[x * 3 + 2] <= formattedColor[2] + shadeVariation)
+                                    points.Add(new Point(x + rect.X, y + rect.Y));
+                        xStep += xDirection;
+                        if (xStep <= xMax && xStep >= xMin) continue;
+                        
+                        xDirection *= -1;
+                        xStep += xDirection * 2;
+                        xDistanceStep--;
+                        if (xDistanceStep != 0) continue;
+
+                        xDistanceStep = xDistance;
+                        xDistance -= xDistanceStep;
+                    }
+
+                    for (var i = 0; i < yDistance; i++)
+                    {
+                        x = xMin + xStep * xDirection;
+                        y = yMin + yStep * yDirection;
+                        var row = (byte*)regionInBitmapData.Scan0 + y * regionInBitmapData.Stride;
+                        if (row[x * 3] >= formattedColor[0] - shadeVariation &
+                            row[x * 3] <= formattedColor[0] + shadeVariation) //blue
+                            if (row[x * 3 + 1] >= formattedColor[1] - shadeVariation &
+                                row[x * 3 + 1] <= formattedColor[1] + shadeVariation) //green
+                                if (row[x * 3 + 2] >= formattedColor[2] - shadeVariation &
+                                    row[x * 3 + 2] <= formattedColor[2] + shadeVariation) //red
+                                    points.Add(new Point(x + rect.X, y + rect.Y));
+                        yStep += yDirection;
+                        if (yStep > yMax || yStep < yMin)
+                        {
+                            yDirection *= -1;
+                            yStep += yDirection * 2;
+                            yDistanceStep--;
+                            if (yDistanceStep == 0)
+                            {
+                                yDistanceStep = yDistance;
+                                yDistance -= yDistanceStep;
+                            }
+                        }
+                    }
+                }
+            }
+
+            regionInBitmap.Dispose();
+            return (Point[])points.ToArray(typeof(Point));
+        }
+
+        //search for a pixel color on screen
+        //in a spiral pattern from the center of the screen
+        public Point[] Search_Spiral(Color pixelColor, int shadeVariation)
+        {
+            var points = new ArrayList();
+            var rect = new Rectangle(0, 0, Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+            var regionInBitmap = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
+
+            if (_monitor >= Screen.AllScreens.Length)
+            {
+                _monitor = 0;
+            }
+
+            var xOffset = Screen.AllScreens[_monitor].Bounds.Left;
+            var yOffset = Screen.AllScreens[_monitor].Bounds.Top;
+
+            using (var gfx = Graphics.FromImage(regionInBitmap))
+            {
+                gfx.CopyFromScreen(rect.X + xOffset, rect.Y + yOffset, 0, 0, rect.Size, CopyPixelOperation.SourceCopy);
+            }
+
+            var regionInBitmapData = regionInBitmap.LockBits(
+                new Rectangle(0, 0, regionInBitmap.Width, regionInBitmap.Height), ImageLockMode.ReadWrite,
+                PixelFormat.Format24bppRgb);
+            var formattedColor = new int[3] { pixelColor.B, pixelColor.G, pixelColor.R }; //bgr
+
+            unsafe
+            {
+                //search in RegionIn_BitmapData in spiral pattern
+                var xMax = regionInBitmapData.Width;
+                var yMax = regionInBitmapData.Height;
+                const int xMin = 0;
+                const int yMin = 0;
+                var xStep = 1;
+                var yStep = 1;
+                var xDirection = 1;
+                var yDirection = 1;
+                var xDistance = xMax - xMin;
+                var yDistance = yMax - yMin;
+                var xDistanceStep = xDistance;
+                var yDistanceStep = yDistance;
+                var xDistanceDirection = 1;
+                var yDistanceDirection = 1;
+                while (xDistance > 0 || yDistance > 0)
+                {
+                    int x;
+                    int y;
+                    for (var i = 0; i < xDistance; i++)
+                    {
+                        x = xMin + xStep * xDirection;
+                        y = yMin + yStep * yDirection;
+                        var row = (byte*)regionInBitmapData.Scan0 + y * regionInBitmapData.Stride;
+                        if (row[x * 3] >= formattedColor[0] - shadeVariation &
+                            row[x * 3] <= formattedColor[0] + shadeVariation) //blue
+                            if (row[x * 3 + 1] >= formattedColor[1] - shadeVariation &
+                                row[x * 3 + 1] <= formattedColor[1] + shadeVariation) //green
+                                if (row[x * 3 + 2] >= formattedColor[2] - shadeVariation &
+                                    row[x * 3 + 2] <= formattedColor[2] + shadeVariation)
+                                    points.Add(new Point(x + rect.X, y + rect.Y));
+                        xStep += xDirection;
+                        if (xStep <= xMax && xStep >= xMin) continue;
+                        
+                        xDirection *= -1;
+                        xStep += xDirection * 2;
+                        xDistanceStep--;
+                        if (xDistanceStep != 0) continue;
+
+                        xDistanceStep = xDistance;
+                        xDistance -= xDistanceStep;
+                        xDistanceDirection *= -1;
+
+                    }
+
+                    for (var i = 0; i < yDistance; i++)
+                    {
+                        x = xMin + xStep * xDirection;
+                        y = yMin + yStep * yDirection;
+                        var row = (byte*)regionInBitmapData.Scan0 + y * regionInBitmapData.Stride;
+                        if (row[x * 3] >= formattedColor[0] - shadeVariation &
+                            row[x * 3] <= formattedColor[0] + shadeVariation) //blue
+                            if (row[x * 3 + 1] >= formattedColor[1] - shadeVariation &
+                                row[x * 3 + 1] <= formattedColor[1] + shadeVariation) //green
+                                if (row[x * 3 + 2] >= formattedColor[2] - shadeVariation &
+                                    row[x * 3 + 2] <= formattedColor[2] + shadeVariation) //red
+                                    points.Add(new Point(x + rect.X, y + rect.Y));
+                        yStep += yDirection;
+                        if (yStep <= yMax && yStep >= yMin) continue;
+                        
+                        yDirection *= -1;
+                        yStep += yDirection * 2;
+                        yDistanceStep--;
+                        if (yDistanceStep != 0) continue;
+
+                        yDistanceStep = yDistance;
+                        yDistance -= yDistanceStep;
+                        yDistanceDirection *= -1;
+                    }
+                }
+            }
+
+            regionInBitmap.Dispose();
             return (Point[])points.ToArray(typeof(Point));
         }
     }

@@ -2,25 +2,16 @@
 using HandyControl.Controls;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using System.Timers;
 using Timer = System.Timers.Timer;
 using System.Diagnostics;
 using Gumayusi_Orbwalker.Core;
+using MessageBox = HandyControl.Controls.MessageBox;
 
 namespace Gumayusi_Orbwalker
 {
@@ -29,13 +20,11 @@ namespace Gumayusi_Orbwalker
     /// </summary>
     public partial class MainWindow : GlowWindow
     {
-        private static Timer UiTimer; 
-        
-        private readonly List<Champion> champions;
+        private readonly List<Champion> _champions;
 
-        private Champion _selectedChampion = new Champion();
+        private Champion _selectedChampion = new ();
 
-        private readonly LeagueHolder leagueHolder;
+        private readonly LeagueHolder _leagueHolder;
 
         public Champion SelectedChampion
         {
@@ -54,13 +43,13 @@ namespace Gumayusi_Orbwalker
         {
             InitializeComponent();
 
-            UiTimer = new Timer
+            var uiTimer = new Timer
             {
                 Interval = 500
             };
-            UiTimer.Elapsed += UiTimer_Elapsed;
+            uiTimer.Elapsed += UiTimer_Elapsed;
 
-            champions = new List<Champion>()
+            _champions = new List<Champion>()
             {
                 new Champion()
                 {
@@ -155,16 +144,16 @@ namespace Gumayusi_Orbwalker
                 }
             };
 
-            foreach (var champ in champions)
+            foreach (var champ in _champions)
             {
                 ChampionFlow.Add(champ.PictureUri);
             }
 
-            leagueHolder = new LeagueHolder();
+            _leagueHolder = new LeagueHolder();
 
-            SelectedChampion = champions[0];
+            SelectedChampion = _champions[0];
 
-            UiTimer.Start();
+            uiTimer.Start();
             UpdateChampionUi();
             UpdateUi();
         }
@@ -188,7 +177,7 @@ namespace Gumayusi_Orbwalker
         private void UpdateSelectedChampion(int index)
         {
             if (_selectedChampion.Id == index) return;
-            SelectedChampion = champions.FirstOrDefault(ch => ch.Id == index) ?? champions[0];
+            SelectedChampion = _champions.FirstOrDefault(ch => ch.Id == index) ?? _champions[0];
         }
 
         private void OnSelectedChampionChanged()
@@ -196,7 +185,7 @@ namespace Gumayusi_Orbwalker
             //update UI etc
             UpdateChampionUi();
 
-            leagueHolder.OrbWalker.SetChampWindup(SelectedChampion.Windup);
+            _leagueHolder.OrbWalker.SetChampWindup(SelectedChampion.Windup);
 
             Trace.WriteLine($"champ name : {SelectedChampion.Name}");
         }
@@ -209,7 +198,7 @@ namespace Gumayusi_Orbwalker
 
         private void UpdateUi()
         {
-            var actState = leagueHolder.OrbWalker.GetActivationState();
+            var actState = _leagueHolder.OrbWalker.GetActivationState();
             StatusTextBlock.Text = actState ? "Running" : "Disabled";
             StatusTextBlock.Foreground = actState ? new SolidColorBrush(Color.FromRgb(0,255,0)) : new SolidColorBrush(Color.FromRgb(255, 0, 0));
 
@@ -221,14 +210,8 @@ namespace Gumayusi_Orbwalker
 
         private void ActiveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!leagueHolder.OrbWalker.GetActivationState())
-            {
-                leagueHolder.OrbWalker.SetActivationState(true);
-            }
-            else
-            {
-                leagueHolder.OrbWalker.SetActivationState(false);
-            }
+            _leagueHolder.OrbWalker.SetActivationState(!_leagueHolder.OrbWalker.GetActivationState());
+            
             UpdateUi();
         }
 
@@ -242,81 +225,75 @@ namespace Gumayusi_Orbwalker
 
         private void SaveConfig()
         {
-            var conf = leagueHolder.Settings.Config;
-            conf.isHighAccuracyModeChecked = _highAccuracyIsChecked;
+            var conf = _leagueHolder.Settings.Config;
+            conf.isHighAccuracyModeChecked = HighAccuracyIsChecked;
             conf.EnemyHpColorHtml = _enemyHpColor;
-            leagueHolder.SaveSettingsAndApply();
+            _leagueHolder.SaveSettingsAndApply();
         }
 
         private void LoadConfig(bool loadFile = true)
         {
             if(loadFile)
-                leagueHolder.LoadSettingsAndApply();
+                _leagueHolder.LoadSettingsAndApply();
 
-            var conf = leagueHolder.Settings.Config;
+            var conf = _leagueHolder.Settings.Config;
 
             HighAccuracyIsChecked = conf.isHighAccuracyModeChecked;
-            EnemyHpColor = conf.EnemyHpColorHtml ?? "#FFFFFF";
-            EnemyHpBarColorTextBlock.Text = EnemyHpColor.Substring(1) ?? "FFFFFF";
-            EnemyHpColorTextBox.Text = EnemyHpColor.Substring(1) ?? "FFFFFF";
+            EnemyHpColor = conf.EnemyHpColorHtml;
+            EnemyHpBarColorTextBlock.Text = EnemyHpColor[1..];
+            EnemyHpColorTextBox.Text = EnemyHpColor[1..];
         }
 
         #region UI stuff
 
-        private bool _isSettingsPanelOpen = false;
+        private bool _isSettingsPanelOpen;
 
         public bool IsSettingsPanelOpen
         {
             get => _isSettingsPanelOpen;
             set
             {
-                if(_isSettingsPanelOpen != value)
+                if (_isSettingsPanelOpen == value) return;
+                
+                _isSettingsPanelOpen = value;
+                SettingsPanelGrid.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+                if(value == false)
                 {
-                    _isSettingsPanelOpen = value;
-                    SettingsPanelGrid.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
-                    if(value == false)
-                    {
-                        SaveConfig();
-                    }
-                    else
-                    {
-                        LoadConfig();
-                    }
+                    SaveConfig();
+                }
+                else
+                {
+                    LoadConfig();
                 }
             }
         }
 
-        private bool _highAccuracyIsChecked;
+        public bool HighAccuracyIsChecked { get; set; }
 
-        public bool HighAccuracyIsChecked
-        {
-            get => _highAccuracyIsChecked;
-            set
-            {
-                _highAccuracyIsChecked = value;
-            }
-        }
-
-        private string _enemyHpColor;
+        private string _enemyHpColor = string.Empty;
 
         public string EnemyHpColor
         {
             get => _enemyHpColor;
             set
             {
-                if(value.Length != 7 || value == null)
+                if(value.Length != 7)
                 {
                     EnemyHpColorRectangle.Fill = new SolidColorBrush(Color.FromRgb(255, 255, 255));
                 }
                 else
                 {
-                    if(value.Length == 7)
+                    if (value.Length != 7) return;
+
+                    _enemyHpColor = value;
+                    try
                     {
-                        _enemyHpColor = value;
-
-                        var RGB = StringToByteArray(value.Substring(1));
-
-                        EnemyHpColorRectangle.Fill = new SolidColorBrush(Color.FromRgb(RGB[0], RGB[1], RGB[2]));
+                        var rgb = StringToByteArray(value.Substring(1));
+                        EnemyHpColorRectangle.Fill = new SolidColorBrush(Color.FromRgb(rgb[0], rgb[1], rgb[2]));
+                    }
+                    catch (Exception)
+                    {
+                        MessageBox.Show("Invalid color format. Please use hex format. Example : FFFFFF", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
 
@@ -342,8 +319,8 @@ namespace Gumayusi_Orbwalker
 
         private void HighAccuracy_Click(object sender, RoutedEventArgs e)
         {
-            HighAccuracyIsChecked = !HighAccuracyIsChecked;
-            AccuracyCheckBox.IsChecked = _highAccuracyIsChecked;
+            HighAccuracyIsChecked = AccuracyCheckBox.IsChecked ?? false;
+            AccuracyModeTextBlock.Text = HighAccuracyIsChecked ? "High" : "Low";
         }
 
         private void EnemyHpColorTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -369,6 +346,14 @@ namespace Gumayusi_Orbwalker
         private void GlowWindow_Loaded(object sender, RoutedEventArgs e)
         {
             LoadConfig();
+        }
+
+        private void ButtonAbout_OnClick(object sender, RoutedEventArgs e)
+        {
+            //message box
+            MessageBox.Show("League of Legends Orbwalker by Nathanael Mesrine\n\n" +
+                            "This tool is made for educational purposes only.\n" +
+                            "I am not responsible for any bans or any other consequences.", "About", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

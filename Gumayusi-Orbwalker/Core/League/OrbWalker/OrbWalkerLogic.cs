@@ -267,9 +267,11 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
                         _currentPlayerAttackSpeed = 1;
                     }
                     var autoA = ApiScraper.PlayerAttackSpeed();
-                    autoA = autoA.Replace(',', '.');
+                    //autoA = autoA.Replace(',', '.');
                     if (autoA != "")
+                    {
                         _currentPlayerAttackSpeed = Convert.ToDouble(autoA);
+                    }
 
                     //Log.WriteDebug($"Current player auto attack speed is {_currentPlayerAttackSpeed}");
                 }
@@ -287,8 +289,8 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
             {
                 if (_gameStarted)
                 {
-                    //Point[] enemyArray = pxbot.Search(new Rectangle(0, 0, 1920, 1080), _enemyHpBarColor, 0);
-                    Point[] enemyArray = pxbot.Search_Spiral(new Rectangle(0, 0, 1920, 1080), _enemyHpBarColor, 0);
+                    Point[] enemyArray = pxbot.Search(new Rectangle(0, 0, 1920, 1080), _enemyHpBarColor, 0);
+                    //Point[] enemyArray = pxbot.Search_Spiral(new Rectangle(0, 0, 1920, 1080), _enemyHpBarColor, 0);
                     _searchArray.EnemyHpArrayGlobal = enemyArray;
                     if (enemyArray.Any())
                     {

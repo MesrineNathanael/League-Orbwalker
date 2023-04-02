@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows.Input;
@@ -267,7 +268,10 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
                         _currentPlayerAttackSpeed = 1;
                     }
                     var autoA = ApiScraper.PlayerAttackSpeed();
-                    //autoA = autoA.Replace(',', '.');
+                    var culture = CultureInfo.CurrentCulture;
+                    var decimalSeparator = culture.NumberFormat.NumberDecimalSeparator;
+
+                    autoA = autoA.Replace(",", decimalSeparator).Replace(".", decimalSeparator);
                     if (autoA != "")
                     {
                         _currentPlayerAttackSpeed = Convert.ToDouble(autoA);

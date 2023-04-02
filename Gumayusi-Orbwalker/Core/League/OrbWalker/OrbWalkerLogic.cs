@@ -291,7 +291,8 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
             {
                 if (_gameStarted)
                 {
-                    Point[] enemyArray = pxbot.Search(new Rectangle(0, 0, 1920, 1080), _enemyHpBarColor, 0);
+                    //Point[] enemyArray = pxbot.Search(new Rectangle(0, 0, 1920, 1080), _enemyHpBarColor, 0);
+                    Point[] enemyArray = pxbot.SearchInSpiral(new Rectangle(0, 0, 1920, 1080), _enemyHpBarColor, 0);
                     searchArray.enemyHPArrayGlobal = enemyArray;
                     if (enemyArray.Count() > 0)
                     {

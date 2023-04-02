@@ -142,6 +142,10 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
                             if (_searchArray.EnemyHpArrayGlobal.Any())
                             {
                                 enemyPos = _searchArray.EnemyHpArrayGlobal[_searchArray.EnemyHpArrayGlobal.Count() / 2];
+                                //enemyPos = _searchArray.EnemyHpArrayGlobal[0];
+                            }
+                            else
+                            {
                             }
 
                             if (_searchArray.EnemyHpArrayGlobal.Any() && ScanEnemyEnabled)
@@ -293,8 +297,8 @@ namespace Gumayusi_Orbwalker.Core.League.OrbWalker
             {
                 if (_gameStarted)
                 {
-                    Point[] enemyArray = pxbot.Search(new Rectangle(0, 0, 1920, 1080), _enemyHpBarColor, 0);
-                    //Point[] enemyArray = pxbot.Search_Spiral(new Rectangle(0, 0, 1920, 1080), _enemyHpBarColor, 0);
+                    Point[] enemyArray = pxbot.Search(new Rectangle(450, 175, 1350, 860), _enemyHpBarColor, 2);
+                    //Point[] enemyArray = pxbot.SearchInSpiral(new Rectangle(0, 0, 1920, 1080), _enemyHpBarColor, 60);
                     _searchArray.EnemyHpArrayGlobal = enemyArray;
                     if (enemyArray.Any())
                     {

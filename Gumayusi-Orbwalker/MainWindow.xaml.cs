@@ -110,34 +110,48 @@ namespace Gumayusi_Orbwalker
                 new Champion()
                 {
                     Id = 8,
+                    Name = "Windup 200 ms",
+                    PictureUri = new Uri(@"pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/BgLissandra.jpg"),
+                    Windup = 200
+                },
+                new Champion()
+                {
+                    Id = 9,
+                    Name = "Windup 210 ms",
+                    PictureUri = new Uri(@"pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/BgLissandra.jpg"),
+                    Windup = 210
+                },
+                new Champion()
+                {
+                    Id = 10,
                     Name = "Windup 220 ms",
                     PictureUri = new Uri(@"pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/BgLissandra.jpg"),
                     Windup = 220
                 },
                 new Champion()
                 {
-                    Id = 9,
+                    Id = 11,
                     Name = "Windup 230 ms",
                     PictureUri = new Uri(@"pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/BgLissandra.jpg"),
                     Windup = 230
                 },
                 new Champion()
                 {
-                    Id = 10,
+                    Id = 12,
                     Name = "Windup 240 ms",
                     PictureUri = new Uri(@"pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/BgLissandra.jpg"),
                     Windup = 240
                 },
                 new Champion()
                 {
-                    Id = 11,
+                    Id = 13,
                     Name = "Windup 250 ms",
                     PictureUri = new Uri(@"pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/BgLissandra.jpg"),
                     Windup = 250
                 },
                 new Champion()
                 {
-                    Id = 12,
+                    Id = 14,
                     Name = "Windup 260 ms",
                     PictureUri = new Uri(@"pack://application:,,,/Gumayusi-Orbwalker;component/Resources/Img/BgLissandra.jpg"),
                     Windup = 260

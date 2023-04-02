@@ -116,5 +116,98 @@ namespace Gumayusi_Orbwalker.Core.League.PixelBot
             RegionIn_Bitmap.Dispose();
             return (Point[])points.ToArray(typeof(Point));
         }
+
+        public Point[] SearchInSpiral(Rectangle rect, Color pixelColor, int shadeVariation)
+        {
+            var centerX = rect.X + rect.Width / 2;
+            var centerY = rect.Y + rect.Height / 2;
+
+            var points = new List<Point>();
+            var steps = 0;
+            var direction = 0; // 0 = right, 1 = down, 2 = left, 3 = up
+            var x = centerX;
+            var y = centerY;
+            var found = false;
+
+            while (steps < rect.Width * rect.Height && !found)
+            {
+                // Check current pixel
+                var currentColor = GetPixelColor2(x, y);
+                if (ColorsMatch(currentColor, pixelColor, shadeVariation))
+                {
+                    points.Add(new Point(x, y));
+                    found = true;
+                }
+
+                // Move to next pixel in spiral pattern
+                switch (direction)
+                {
+                    case 0: // right
+                        x++;
+                        if (x > rect.X + rect.Width - 1)
+                        {
+                            direction = 1;
+                            x--;
+                            y++;
+                        }
+                        break;
+
+                    case 1: // down
+                        y++;
+                        if (y > rect.Y + rect.Height - 1)
+                        {
+                            direction = 2;
+                            y--;
+                            x--;
+                        }
+                        break;
+
+                    case 2: // left
+                        x--;
+                        if (x < rect.X)
+                        {
+                            direction = 3;
+                            x++;
+                            y--;
+                        }
+                        break;
+
+                    case 3: // up
+                        y--;
+                        if (y < rect.Y)
+                        {
+                            direction = 0;
+                            y++;
+                            x++;
+                        }
+                        break;
+                }
+
+                steps++;
+            }
+
+            return points.ToArray();
+        }
+
+        private Color GetPixelColor2(int x, int y)
+        {
+            using (var bitmap = new Bitmap(1, 1))
+            {
+                using (var gfx = Graphics.FromImage(bitmap))
+                {
+                    gfx.CopyFromScreen(x, y, 0, 0, new Size(1, 1));
+                }
+
+                return bitmap.GetPixel(0, 0);
+            }
+        }
+
+        private bool ColorsMatch(Color color1, Color color2, int shadeVariation)
+        {
+            var redDiff = Math.Abs(color1.R - color2.R);
+            var greenDiff = Math.Abs(color1.G - color2.G);
+            var blueDiff = Math.Abs(color1.B - color2.B);
+            return redDiff <= shadeVariation && greenDiff <= shadeVariation && blueDiff <= shadeVariation;
+        }
     }
 }

@@ -1,7 +1,7 @@
-# League-Orbwalker-
-Private league orbwalker.
+# League-Orbwalker
+League orbwalker
 
-  (was private)
+  FOR EDUCATIONAL PURPOSE ONLY
   
   This is an Orbwalker for league of legends, will work with any verison of League.
   
